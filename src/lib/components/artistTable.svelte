@@ -1,11 +1,24 @@
 <script lang="ts">
   let { artistVisits } = $props();
 
-  function formatDuration(duration: number): string {
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration % 60;
-
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  function formatDuration(durationMs: number): string {
+    // Convert milliseconds to seconds
+    const totalSeconds = Math.floor(durationMs / 1000);
+    
+    if (totalSeconds < 60) {
+      // Less than 1 minute - show in seconds
+      return `${totalSeconds} seconds`;
+    } else if (totalSeconds < 3600) {
+      // Less than 1 hour - show in minutes
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes}:${seconds.toString().padStart(2, '0')} minutes`;
+    } else {
+      // 1 hour or more - show in hours
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      return `${hours}:${minutes.toString().padStart(2, '0')} hours`;
+    }
   }
 </script>
 
@@ -18,7 +31,8 @@
         <tr>
           <th scope="col" class="px-6 py-3">Artist Id</th>
           <th scope="col" class="px-6 py-3">Artist Name</th>
-          <th scope="col" class="px-6 py-3">Total Time Spent (minutes)</th>
+          <th scope="col" class="px-6 py-3">Total Interaction Time</th>
+          <th scope="col" class="px-6 py-3">Total Unique Visitors</th>
         </tr>
       </thead>
       <tbody>
@@ -38,7 +52,7 @@
               {formatDuration(total_visit_duration)}
             </td>
             <td class="px-6 py-4">
-              {formatDuration(unique_session_count)}
+              {unique_session_count}
             </td>
           </tr>
         {/each}
